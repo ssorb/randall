@@ -6,7 +6,8 @@
                  [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
                  [org.clojure/clojurescript "0.0-2197"]
                  [figwheel "0.1.1"]
-                 [om "0.6.2"]]
+                 [om "0.6.2"]
+                 [sablono "0.2.16"]]
 
   :plugins [[lein-cljsbuild "1.0.3"]
             [lein-figwheel "0.1.1"]]
