@@ -33,6 +33,7 @@
 (def chord-quality [:maj :min :dim :aug])
 
 
+
 (def fingerings
   [1234
    1243
@@ -103,11 +104,13 @@
 
 (defn vamp []
   {:string (rand-nth strings)
+   :key (rand-key)
    :mode (rand-nth natural-modes)
    :tempo (rand-tempo)})
 
 (defn vamp-2-strings []
   {:strings (rand-nth string-pairs)
+   :key (rand-key)
    :mode (rand-nth natural-modes)
    :tempo (rand-tempo)})
 
@@ -131,15 +134,13 @@
   (rand-n-of 4 [1 2 3 4]))
 
 (defn rand-fingerings []
-  (let [r (rand-n-of 6 fingerings)]
-    {:count (count r)
-     :fingerings r}))
+  {:fingerings (repeatedly 6 rand-fingering)})
 
 (defn rand-triads
   ([] (rand-triads (max 2 (rand-int 8))))
   ([n]
    (mapv vector
          (rand-n-of n notes)
-         (rand-n-of n triads))))
+         (rand-n-of n chord-quality))))
 
 
