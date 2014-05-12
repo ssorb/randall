@@ -88,7 +88,7 @@
        (mapv first)))
 
 (defn rand-tempo []
-  (rand-nth (range 50 (inc 120))))
+  (rand-nth (range 50 (inc 180))))
 
 (defn rand-n-tones []
   (inc (rand-int 12)))
@@ -142,5 +142,8 @@
    (mapv vector
          (rand-n-of n notes)
          (rand-n-of n chord-quality))))
+
+(defn rand-twelve-keys []
+  (rand-n-of 12 notes))
 
 
