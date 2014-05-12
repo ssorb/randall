@@ -17,11 +17,18 @@
   :cljsbuild { 
     :builds [{:id "randall"
               :source-paths ["src"]
-              :compiler {
-                :output-to "resources/public/js/compiled/randall.js"
-                :output-dir "resources/public/js/compiled/out"
-                :optimizations :none
-                :source-map true}}]}
+              :compiler { :output-to "resources/public/js/compiled/randall.js"
+                          :output-dir "resources/public/js/compiled/out"
+                          :optimizations :none
+                          :source-map true}}
+             {:id "public"
+              :source-paths ["src"]
+              :compiler { :output-to "resources/public/js/compiled/randall-public.js"
+                          :output-dir "resources/public/js/compiled/out-public"
+                          :optimizations :advanced
+                          :preamble ["react/react.min.js"]
+                          :externs ["react/externs/react.js"]}}]
+    }
   :figwheel {:http-server-root "public" ;; default and assumes "resources"
              :server-port 3449 ;; default
              :css-dirs ["public/resources/css"] ;; watch and update CSS
