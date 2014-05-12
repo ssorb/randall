@@ -27,37 +27,35 @@
                           (str (name k) (name q)))
                         triads)))
 
-(defn triads-view [{:keys [triads]} _owner]
-  (reify
-    om/IRender
-    (render [_]
-      (html
-        [:div {:class panel-class}
-         [:h3 "Random Triads Voice Leading"]
-         [:p {:class "lead"} (triads-str triads)]]))))
+(defn make-view [title content-fn]
+  (fn [data _owner]
+    (reify
+      om/IRender
+      (render [_]
+        (html
+          [:div {:class panel-class}
+           [:h3 title]
+           (content-fn data)])))))
 
-(defn fingering-view [{:keys [fingering]} _owner]
-  (reify
-    om/IRender
-    (render [_]
-      (html
-        [:div {:class panel-class}
-         [:h3 "Random Fingering"]
-         [:p {:class "lead"} (numbers-str fingering)]]))))
+(def triads-view
+  (make-view "Random Triads Voice Leading"
+             (fn [{:keys [triads]}]
+               [:p {:class "lead"} (triads-str triads)])))
+
+(def fingering-view
+  (make-view "Random Fingering"
+             (fn [{:keys [fingering]} _owner]
+               [:p {:class "lead"} (numbers-str fingering)])))
 
 (defn fingerings-str [fs]
   (into [:ul {:class "list-unstyled"}]
           (mapv (fn [fingering] [:li {:class "lead"} (numbers-str fingering)])
                 fs)))
 
-(defn fingerings-view [{:keys [fingerings]} _owner]
-  (reify
-    om/IRender
-    (render [_]
-      (html
-        [:div {:class panel-class}
-         [:h3 "Random 6 String Fingerings"]
-         (fingerings-str fingerings)]))))
+(def fingerings-view
+  (make-view "Random 6 String Fingerings"
+             (fn [{:keys [fingerings]}]
+               (fingerings-str fingerings))))
 
 (defn formula-str [f]
   (string/join " " (map name f)))
@@ -65,27 +63,23 @@
 (defn zone-str [z]
   (string/join " " (map str z)))
 
-(defn improv-view [{:keys [improv]} _owner]
-  (reify
-    om/IRender
-    (render [_]
-      (html
-        [:div {:class panel-class}
-         [:h3 "Wayne Krantz Improv Formula"]
-         [:table {:class "table table-condensed"}
-          [:tbody
-           [:tr
-            [:th "Key"]
-            [:td (name (get improv :key ""))]]
-           [:tr
-            [:th "Zone"]
-            [:td (-> improv :zone zone-str)]]
-           [:tr
-            [:th "Tempo"]
-            [:td (-> improv :tempo)]]
-           [:tr
-            [:th "Formula"]
-            [:td (-> improv :formula formula-str)]]]]]))))
+(def improv-view
+  (make-view "Wayne Krantz Improv Formula"
+             (fn [{:keys [improv]}]
+               [:table {:class "table table-condensed"}
+                [:tbody
+                 [:tr
+                  [:th "Key"]
+                  [:td (name (get improv :key ""))]]
+                 [:tr
+                  [:th "Zone"]
+                  [:td (-> improv :zone zone-str)]]
+                 [:tr
+                  [:th "Tempo"]
+                  [:td (-> improv :tempo)]]
+                 [:tr
+                  [:th "Formula"]
+                  [:td (-> improv :formula formula-str)]]]])))
 
 
 (defn build-root [app owner]
@@ -118,8 +112,7 @@
          [:div {:class "row"}
           (om/build fingering-view app)]
          [:div {:class "row"}
-          (om/build fingerings-view app)]
-         ]))))
+          (om/build fingerings-view app)]]))))
 
 (om/root build-root app-state
          {:target (. js/document (getElementById "app"))})
