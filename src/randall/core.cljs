@@ -58,6 +58,16 @@
             [:div {:class "panel-body"}
              (content-fn (:values data))]]])))))
 
+
+(defn dropdown []
+  [:div {:class "dropdown"}
+   [:a {:class "btn btn-primary dropdown-toggle" :data-toggle "dropdown" :href "#"}
+    "Label "
+    [:span {:class "caret"}]]
+   [:ul {:class "dropdown-menu"}
+    [:li [:a {:href "#"} "Action 1"]]
+    [:li [:a {:href "#"} "Action 2"]]]])
+
 (def twelve-keys-view
   (make-view (fn [values]
                (make-table [(keywords-str values)]))))
@@ -98,14 +108,13 @@
                              (-> values :tempo)
                              (-> values :formula formula-str)]]))))
 
-(defn generate-values [app]
+(defn generate-values [app exercise]
   (om/transact! app (fn [app]
-                      (let [enabled-ex (rand-nth (keys app))]
-                        (reduce (fn [result [k ex]]
-                                  (assoc result k
-                                                (assoc ex :values ((:generator ex))
-                                                          :enabled (= k enabled-ex))))
-                                app app)))))
+                      (reduce (fn [result [k ex]]
+                                (assoc result k
+                                              (assoc ex :values ((:generator ex))
+                                                        :enabled (= k exercise))))
+                              app app))))
 
 (def exercise-order [:twelve-keys
                      :triads
@@ -151,6 +160,20 @@
                                        :view      twelve-keys-view
                                        :generator r/rand-twelve-keys}}))
 
+(defn exercises-button [app _owner]
+  (reify
+    om/IRenderState
+    (render-state [_ {:keys [refresh]}]
+      (html
+        [:div {:class "dropdown"}
+         [:a {:class "btn btn-primary dropdown-toggle" :data-toggle "dropdown" :href "#"}
+          "Exercises "
+          [:span {:class "caret"}]]
+         (into [:ul {:class "dropdown-menu"}
+                [:li [:a {:href "#" :on-click #(put! refresh (rand-nth (keys @app)))} "Random Exercise"]]]
+               (for [ex exercise-order]
+                 [:li [:a {:href "#" :on-click #(put! refresh ex)} (-> app ex :title)]]))]))))
+
 (defn build-root [app owner]
   (reify
     om/IInitState
@@ -159,23 +182,19 @@
     om/IWillMount
     (will-mount [_]
       (let [{:keys [refresh]} (om/get-state owner)]
-        (put! refresh true)
-        (go-loop [_ (<! refresh)]
-                 (generate-values app)
+        (put! refresh (rand-nth (keys app)))
+        (go-loop [exercise (<! refresh)]
+                 (generate-values app exercise)
                  (recur (<! refresh)))))
     om/IRenderState
     (render-state [_ {:keys [refresh]}]
       (html
         [:div {:class "container-fluid"}
          [:div {:class "row"}
-          [:div {:class "col-sm-3 col-md-2 sidebar"}
-           [:div {:class "row"}
-            [:div
-             [:button {:type "button" :class "btn btn-primary" :on-click #(put! refresh true)} "Random Exercise"]]]]
-          (into [:div {:class "col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"}
-                 [:div {:class "row small-screen-only"}
+          (into [:div {:class "main"}
+                 [:div {:class "row"}
                   [:div
-                   [:button {:type "button" :class "btn btn-primary" :on-click #(put! refresh true)} "Random Exercise"]]]]
+                   (om/build exercises-button app {:init-state {:refresh refresh}})]]]
                 (for [exercise exercise-order]
                   (let [ex (exercise app)]
                     (om/build (:view ex) ex))))]]))))
