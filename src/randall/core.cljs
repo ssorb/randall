@@ -21,16 +21,28 @@
 
 
 (defn keywords-str [kws]
-  (string/join " " (map name kws)))
+  (map name kws))
 
 (defn numbers-str [z]
-  (string/join " " (map str z)))
+  (map str z))
 
 (defn keyword-pairs-str [pairs]
-  (string/join " "
-               (map (fn [[k q]]
-                          (str (name k) (name q)))
-                        pairs)))
+  (map (fn [[k q]]
+         (str (name k) (name q)))
+       pairs))
+
+(defn make-table
+  ([data]
+   (make-table nil data))
+  ([headers data]
+   [:table {:class "table "}
+    [:thead
+     (into [:tr] (map (fn [h] [:th h]) headers))]
+    (into [:tbody]
+          (map (fn [row]
+                 (into [:tr]
+                       (map (fn [cell] [:td cell]) row)))
+               data))]))
 
 (defn make-view [title content-fn]
   (fn [data _owner]
@@ -38,7 +50,7 @@
       om/IRender
       (render [_]
         (html
-          [:div {:class "panel panel-success "}
+          [:div {:class "panel "}
            [:div {:class "panel-heading"} title]
            [:div {:class "panel-body"}
             (content-fn data)]])))))
@@ -47,23 +59,13 @@
 (def twelve-keys-view
   (make-view "12 Keys"
              (fn [{:keys [twelve-keys]}]
-               [:p {:class "lead"} (keywords-str twelve-keys)])))
+               (make-table [(keywords-str twelve-keys)]))))
 
 (def vamp-view
   (make-view "Goodrick Single String Vamp"
              (fn [{:keys [vamp]}]
-               [:table {:class "table table-condensed"}
-                [:tbody
-                 [:tr
-                  [:th "String"]
-                  [:th "Key"]
-                  [:th "Mode"]
-                  [:th "Tempo"]]
-                 [:tr
-                  [:td {:class "centered"} (name (get vamp :string ""))]
-                  [:td (name (get vamp :key ""))]
-                  [:td (name (get vamp :mode ""))]
-                  [:td (:tempo vamp)]]]])))
+               (make-table ["String" "Key" "Mode" "Tempo"]
+                           [[(name (get vamp :string "")) (name (get vamp :key "")) (name (get vamp :mode "")) (:tempo vamp)]]))))
 
 (defn tuple-str [[x y]]
   (if (and x y)
@@ -73,38 +75,26 @@
 (def vamp-2-strings-view
   (make-view "Goodrick Two String Vamp"
              (fn [{:keys [vamp-2-strings]}]
-               [:table {:class "table table-condensed"}
-                [:tbody
-                 [:tr
-                  [:th "Strings"]
-                  [:th "Key"]
-                  [:th "Mode"]
-                  [:th "Tempo"]]
-                 [:tr
-                  [:td (tuple-str (get vamp-2-strings :strings []))]
-                  [:td (name (get vamp-2-strings :key ""))]
-                  [:td (name (get vamp-2-strings :mode ""))]
-                  [:td (:tempo vamp-2-strings)]]]])))
+               (make-table ["Strings" "Key" "Mode" "Tempo"]
+                           [[(tuple-str (get vamp-2-strings :strings []))
+                             (name (get vamp-2-strings :key ""))
+                             (name (get vamp-2-strings :mode ""))
+                             (:tempo vamp-2-strings)]]))))
 
 (def triads-view
   (make-view "Random Triads Voice Leading"
              (fn [{:keys [triads]}]
-               [:p {:class "lead"} (keyword-pairs-str triads)])))
+               (make-table [(keyword-pairs-str triads)]))))
 
 (def fingering-view
   (make-view "Random Fingering"
              (fn [{:keys [fingering]} _owner]
-               [:p {:class "lead"} (numbers-str fingering)])))
-
-(defn fingerings-str [fs]
-  (into [:ul {:class "list-unstyled"}]
-          (mapv (fn [fingering] [:li {:class "lead"} (numbers-str fingering)])
-                fs)))
+               (make-table [[(numbers-str fingering)]]))))
 
 (def fingerings-view
   (make-view "Random 6 String Fingerings"
              (fn [{:keys [fingerings]}]
-               (fingerings-str fingerings))))
+               (make-table (map (comp vector numbers-str) fingerings)))))
 
 (defn formula-str [f]
   (string/join " " (map name f)))
@@ -115,21 +105,11 @@
 (def improv-view
   (make-view "Wayne Krantz Improv Formula"
              (fn [{:keys [improv]}]
-               [:table {:class "table table-condensed"}
-                [:tbody
-                 [:tr
-                  [:th "Key"]
-                  [:td (name (get improv :key ""))]]
-                 [:tr
-                  [:th "Zone"]
-                  [:td (-> improv :zone zone-str)]]
-                 [:tr
-                  [:th "Tempo"]
-                  [:td (-> improv :tempo)]]
-                 [:tr
-                  [:th "Formula"]
-                  [:td (-> improv :formula formula-str)]]]])))
-
+               (make-table ["Key" "Zone" "Tempo" "Formula"]
+                           [[(name (get improv :key ""))
+                             (-> improv :zone zone-str)
+                             (-> improv :tempo)
+                             (-> improv :formula formula-str)]]))))
 
 (defn build-root [app owner]
   (reify
