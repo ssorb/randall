@@ -32,6 +32,14 @@ body {
   }
 }
 
+.small-screen-only {
+  display: block;
+}
+@media (min-width: 768px) {
+  .small-screen-only {
+    display: none;
+  }
+}
 /*
  * Main content
  */
