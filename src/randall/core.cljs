@@ -132,24 +132,27 @@
     om/IRenderState
     (render-state [_ {:keys [refresh]}]
       (html
-        [:div {:class "container"}
+        [:div {:class "container-fluid"}
          [:div {:class "row"}
-          [:div
-           [:button {:type "button" :class "btn btn-link" :on-click #(put! refresh true)} "Refresh"]]]
-         [:div {:class "row"}
-          (om/build improv-view app)]
-         [:div {:class "row"}
-          (om/build twelve-keys-view app)]
-         [:div {:class "row"}
-          (om/build vamp-view app)]
-         [:div {:class "row"}
-          (om/build vamp-2-strings-view app)]
-         [:div {:class "row"}
-          (om/build triads-view app)]
-         [:div {:class "row"}
-          (om/build fingering-view app)]
-         [:div {:class "row"}
-          (om/build fingerings-view app)]]))))
+          [:div {:class "col-sm-3 col-md-2 sidebar"}
+           [:div {:class "row"}
+            [:div
+             [:button {:type "button" :class "btn btn-link" :on-click #(put! refresh true)} "Refresh"]]]]
+          [:div {:class "col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"}
+           [:div {:class "row"}
+            (om/build improv-view app)]
+           [:div {:class "row"}
+            (om/build twelve-keys-view app)]
+           [:div {:class "row"}
+            (om/build vamp-view app)]
+           [:div {:class "row"}
+            (om/build vamp-2-strings-view app)]
+           [:div {:class "row"}
+            (om/build triads-view app)]
+           [:div {:class "row"}
+            (om/build fingering-view app)]
+           [:div {:class "row"}
+            (om/build fingerings-view app)]]]]))))
 
 (om/root build-root app-state
          {:target (. js/document (getElementById "app"))})
