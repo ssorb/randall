@@ -54,7 +54,7 @@
         (html
           [:div {:class (str "row " (if-not (:enabled data) "hide"))}
            [:div {:class "panel "}
-            [:div {:class "panel-heading"} (:title data)]
+            [:div {:class "panel-heading"} [:h2 (:title data)]]
             [:div {:class "panel-body"}
              (content-fn (:values data))]]])))))
 

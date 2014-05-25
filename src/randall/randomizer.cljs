@@ -1,20 +1,28 @@
 (ns randall.randomizer)
 
-(def chromatic [:b2 :2 :b3 :3 :4 :b5 :5 :b6 :6 :b7 :7])
+(def flat "♭")
 
-(def chromatic-map [{:b2 1}
-                    {:2  2}
-                    {:b3 3}
-                    {:3  4}
-                    {:4  5}
-                    {:b5 6}
-                    {:5  7}
-                    {:b6 8}
-                    {:6  9}
-                    {:b7 10}
-                    {:7  11}])
+(defn flatten [s]
+  (str flat s))
 
-(def notes [:C :Db :D :Eb :E :F :Gb :G :Ab :A :Bb :B])
+(defn flatten-note [note]
+  (str note flat))
+
+(def chromatic [(flatten 2) "2" (flatten 3) "3" "4" (flatten 5) "5" (flatten 6) "6" (flatten 7) "7"])
+
+(def chromatic-map [{(flatten 2) 1}
+                    {"2" 2}
+                    {(flatten 3) 3}
+                    {"3" 4}
+                    {"4" 5}
+                    {(flatten 5) 6}
+                    {"5" 7}
+                    {(flatten 6) 8}
+                    {"6" 9}
+                    {(flatten 7) 10}
+                    {"7" 11}])
+
+(def notes [:C (flatten-note "D") :D (flatten-note "E") :E :F (flatten-note "G") :G (flatten-note "A") :A (flatten-note "B") :B])
 
 (def c-scale [:C :D :E :F :G :A :B])
 
@@ -22,17 +30,15 @@
 
 (def strings [:E :A :D :G :B :e])
 
-(def string-pairs  [[:E :A]
-                    [:A :D]
-                    [:D :G]
-                    [:G :B]
-                    [:B :e]])
+(def string-pairs [[:E :A]
+                   [:A :D]
+                   [:D :G]
+                   [:G :B]
+                   [:B :e]])
 
-(def chords [:maj7 :7 :9 :7b9 :13 :11 :#11 :sus4 :sus2 :7b5 :alt])
+(def chords [:maj7 :7 :9 (str 7 flat 9) :13 :11 :#11 :sus4 :sus2 (str 7 flat 5) :alt])
 
 (def chord-quality [:maj :min :dim :aug])
-
-
 
 (def fingerings
   [1234
@@ -84,7 +90,7 @@
        (rand-n-of size)
        (concat [{:1 0}])
        (apply merge)
-       (sort-by val < )
+       (sort-by val <)
        (mapv first)))
 
 (defn rand-tempo []
@@ -96,39 +102,39 @@
 (defn improv
   ([] (improv (rand-n-tones)))
   ([size]
-   {:key (rand-key)
+   {:key     (rand-key)
     :formula (rand-formula size)
-    :size size
-    :zone (rand-zone)
-    :tempo (rand-tempo)}))
+    :size    size
+    :zone    (rand-zone)
+    :tempo   (rand-tempo)}))
 
 (defn vamp []
   {:string (rand-nth strings)
-   :key (rand-key)
-   :mode (rand-nth natural-modes)
-   :tempo (rand-tempo)})
+   :key    (rand-key)
+   :mode   (rand-nth natural-modes)
+   :tempo  (rand-tempo)})
 
 (defn vamp-2-strings []
   {:strings (rand-nth string-pairs)
-   :key (rand-key)
-   :mode (rand-nth natural-modes)
-   :tempo (rand-tempo)})
+   :key     (rand-key)
+   :mode    (rand-nth natural-modes)
+   :tempo   (rand-tempo)})
 
 (defn one-string-formula []
   (let [size (rand-n-tones)]
-    {:string (rand-nth strings)
+    {:string  (rand-nth strings)
      :formula (rand-formula (rand-n-tones))
-     :size size
-     :key (rand-key)
-     :tempo (rand-tempo)}))
+     :size    size
+     :key     (rand-key)
+     :tempo   (rand-tempo)}))
 
 (defn two-string-formula []
   (let [size (rand-n-tones)]
     {:strings (rand-nth string-pairs)
      :formula (rand-formula size)
-     :size size
-     :key (rand-key)
-     :tempo (rand-tempo)}))
+     :size    size
+     :key     (rand-key)
+     :tempo   (rand-tempo)}))
 
 (defn rand-fingering []
   (rand-n-of 4 [1 2 3 4]))
@@ -145,5 +151,3 @@
 
 (defn rand-twelve-keys []
   (rand-n-of 12 notes))
-
-
