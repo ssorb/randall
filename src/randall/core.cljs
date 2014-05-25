@@ -171,7 +171,7 @@
           [:div {:class "col-sm-3 col-md-2 sidebar"}
            [:div {:class "row"}
             [:div
-             [:button {:type "button" :class "btn btn-link" :on-click #(put! refresh true)} "Refresh"]]]]
+             [:button {:type "button" :class "btn btn-link" :on-click #(put! refresh true)} "Random Exercise"]]]]
           (into [:div {:class "col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"}]
                 (for [exercise exercise-order]
                   (let [ex (exercise app)]
