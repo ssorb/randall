@@ -2,24 +2,24 @@
 
 (def flat "♭")
 
-(defn flatten [s]
+(defn as-flat [s]
   (str flat s))
 
 (defn flatten-note [note]
   (str note flat))
 
-(def chromatic [(flatten 2) "2" (flatten 3) "3" "4" (flatten 5) "5" (flatten 6) "6" (flatten 7) "7"])
+(def chromatic [(as-flat 2) "2" (as-flat 3) "3" "4" (as-flat 5) "5" (as-flat 6) "6" (as-flat 7) "7"])
 
-(def chromatic-map [{(flatten 2) 1}
+(def chromatic-map [{(as-flat 2) 1}
                     {"2" 2}
-                    {(flatten 3) 3}
+                    {(as-flat 3) 3}
                     {"3" 4}
                     {"4" 5}
-                    {(flatten 5) 6}
+                    {(as-flat 5) 6}
                     {"5" 7}
-                    {(flatten 6) 8}
+                    {(as-flat 6) 8}
                     {"6" 9}
-                    {(flatten 7) 10}
+                    {(as-flat 7) 10}
                     {"7" 11}])
 
 (def notes [:C (flatten-note "D") :D (flatten-note "E") :E :F (flatten-note "G") :G (flatten-note "A") :A (flatten-note "B") :B])
