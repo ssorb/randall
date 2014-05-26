@@ -59,15 +59,6 @@
              (content-fn (:values data))]]])))))
 
 
-(defn dropdown []
-  [:div {:class "dropdown"}
-   [:a {:class "btn btn-primary dropdown-toggle" :data-toggle "dropdown" :href "#"}
-    "Label "
-    [:span {:class "caret"}]]
-   [:ul {:class "dropdown-menu"}
-    [:li [:a {:href "#"} "Action 1"]]
-    [:li [:a {:href "#"} "Action 2"]]]])
-
 (def twelve-keys-view
   (make-view (fn [values]
                (make-table [(keywords-str values)]))))
