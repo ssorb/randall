@@ -46,13 +46,14 @@
       om/IRenderState
       (render-state [_ {:keys [refresh exercise]}]
         (html
-          [:div {:class (str "row " (if-not (:enabled data) "hide"))}
-           [:div {:class "panel "}
-            [:div {:class "panel-heading page-hearder"}
-             [:h1 {:class ""} (:title data)
-              [:button {:class "btn btn-warning btn-xs" :style {:margin-left "20px"} :href "#"
-                        :on-click #(put! refresh exercise)}
-               "refresh"]]]
+          [:div {:class (str "row " (if-not (:enabled data) "hide"))
+                 :style {:margin-top "20px"}}
+           [:div {:class "panel panel-default"}
+            [:div {:class "panel-heading"}
+             (:title data)
+             [:button {:class    "btn btn-warning btn-xs" :style {:margin-left "20px"}
+                       :on-click #(put! refresh exercise)}
+              "refresh"]]
             [:div {:class "panel-body"}
              (content-fn (:values data))]]])))))
 
