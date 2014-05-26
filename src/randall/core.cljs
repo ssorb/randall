@@ -33,71 +33,72 @@
 (defn zone-str [z]
   (string/join " " (map str z)))
 
-(defn make-table
-  ([data]
-   (make-table nil data))
-  ([headers data]
-   [:table {:class "table "}
-    [:thead
-     (into [:tr] (map (fn [h] [:th h]) headers))]
-    (into [:tbody]
-          (map (fn [row]
-                 (into [:tr]
-                       (map (fn [cell] [:td cell]) row)))
-               data))]))
+(defn make-descriptions-list
+  [headers data]
+  (into [:dl {:class "dl-horizontal"}]
+        (interleave
+             (map (fn [x] [:dt x]) headers)
+             (map (fn [x] [:dd x]) data))))
 
 (defn make-view [content-fn]
   (fn [data _owner]
     (reify
-      om/IRender
-      (render [_]
+      om/IRenderState
+      (render-state [_ {:keys [refresh exercise]}]
         (html
           [:div {:class (str "row " (if-not (:enabled data) "hide"))}
            [:div {:class "panel "}
-            [:div {:class "panel-heading"} [:h3 (:title data)]]
+            [:div {:class "panel-heading page-hearder"}
+             [:h1 {:class ""} (:title data)
+              [:button {:class "btn btn-warning btn-xs" :style {:margin-left "20px"} :href "#"
+                        :on-click #(put! refresh exercise)}
+               "refresh"]]]
             [:div {:class "panel-body"}
              (content-fn (:values data))]]])))))
 
+(defn horizontal-list [items]
+  (into [:ul {:class "list-inline"}]
+        (for [each items]
+          [:li {:class "lead"} each])))
 
 (def twelve-keys-view
   (make-view (fn [values]
-               (make-table [(keywords-str values)]))))
+               (horizontal-list (keywords-str values)))))
 
 (def vamp-view
   (make-view (fn [values]
-               (make-table ["String" "Key" "Mode" "Tempo"]
-                           [[(name (get values :string ""))
-                             (name (get values :key ""))
-                             (name (get values :mode ""))
-                             (:tempo values)]]))))
+               (make-descriptions-list
+                 ["String" "Key" "Mode" "Tempo"]
+                 [(name (get values :string ""))
+                  (name (get values :key ""))
+                  (name (get values :mode ""))
+                  (:tempo values)]))))
 
 (def vamp-2-strings-view
   (make-view (fn [values]
-               (make-table ["Strings" "Key" "Mode" "Tempo"]
-                           [[(tuple-str (get values :strings []))
-                             (name (get values :key ""))
-                             (name (get values :mode ""))
-                             (:tempo values)]]))))
+               (make-descriptions-list
+                 ["Strings" "Key" "Mode" "Tempo"]
+                 [(tuple-str (get values :strings []))
+                  (name (get values :key ""))
+                  (name (get values :mode ""))
+                  (:tempo values)]))))
 
 (def triads-view
   (make-view (fn [values]
-               (make-table [(keyword-pairs-str values)]))))
+               (horizontal-list (keyword-pairs-str values)))))
 
 (def fingering-view
   (make-view (fn [values]
-               (make-table [[(numbers-str values)]]))))
-
-(def fingerings-view
-  (make-view (fn [values]
-               (make-table (map (comp vector numbers-str) values)))))
+               (horizontal-list [(numbers-str values)]))))
 
 (def improv-view
   (make-view (fn [values]
-               (make-table ["Key" "Zone" "Tempo" "Formula"]
-                           [[(name (get values :key ""))
-                             (-> values :zone zone-str)
-                             (-> values :tempo)
-                             (-> values :formula formula-str)]]))))
+               (make-descriptions-list
+                 ["Key" "Zone" "Tempo" "Formula"]
+                 [(name (get values :key ""))
+                  (-> values :zone zone-str)
+                  (-> values :tempo)
+                  (-> values :formula formula-str)]))))
 
 (defn generate-values [app exercise]
   (om/transact! app (fn [app]
@@ -112,8 +113,7 @@
                      :improv
                      :vamp
                      :vamp-2-strings
-                     :fingering
-                     :fingerings])
+                     :fingering])
 
 (def app-state (atom {:improv         {:enabled   false
                                        :title     "Krantz Formula"
@@ -125,11 +125,6 @@
                                        :values    nil
                                        :view      triads-view
                                        :generator #(r/rand-triads 10)}
-                      :fingerings     {:enabled   false
-                                       :title     "Fingerings"
-                                       :values    nil
-                                       :view      fingerings-view
-                                       :generator #(:fingerings (r/rand-fingerings))}
                       :fingering      {:enabled   false
                                        :title     "Fingering"
                                        :values    nil
@@ -157,7 +152,7 @@
     (render-state [_ {:keys [refresh]}]
       (html
         [:div {:class "dropdown"}
-         [:a {:class "btn btn-primary dropdown-toggle" :data-toggle "dropdown" :href "#"}
+         [:a {:class "btn btn-info dropdown-toggle" :data-toggle "dropdown" :href "#"}
           "Exercises "
           [:span {:class "caret"}]]
          (into [:ul {:class "dropdown-menu"}
@@ -188,7 +183,8 @@
                    (om/build exercises-button app {:init-state {:refresh refresh}})]]]
                 (for [exercise exercise-order]
                   (let [ex (exercise app)]
-                    (om/build (:view ex) ex))))]]))))
+                    (om/build (:view ex) ex {:init-state {:refresh refresh
+                                                          :exercise exercise}}))))]]))))
 
 (om/root build-root app-state
          {:target (. js/document (getElementById "app"))})

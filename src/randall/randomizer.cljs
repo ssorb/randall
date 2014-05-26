@@ -1,6 +1,6 @@
 (ns randall.randomizer)
 
-(def flat "♭")
+(def flat "b")
 
 (defn as-flat [s]
   (str flat s))
