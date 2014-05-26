@@ -8982,11 +8982,11 @@ var vl = function ul(b) {
       return C(c, "randall.core/t10175");
     }, ol.prototype.Zb = !0, ol.prototype.sb = function(b, c) {
       var d = xc(c) ? U.c(Se, c) : c, k = S.c(d, Pg), l = S.c(d, Bg);
-      return React.DOM.div({className:[w("row "), w(Ga(Sf.e(this.data)) ? "hide" : null)].join("")}, React.DOM.div({className:"panel "}, React.DOM.div({className:"panel-heading page-hearder"}, React.DOM.h1({className:""}, Qj(Qg.e(this.data)), React.DOM.button({className:"btn btn-warning btn-xs", style:{"margin-left":"20px"}, href:"#", onClick:function(b, c, d, e, f) {
+      return React.DOM.div({className:[w("row "), w(Ga(Sf.e(this.data)) ? "hide" : null)].join(""), style:{"margin-top":"20px"}}, React.DOM.div({className:"panel panel-default"}, React.DOM.div({className:"panel-heading"}, Qj(Qg.e(this.data)), React.DOM.button({className:"btn btn-warning btn-xs", style:{"margin-left":"20px"}, onClick:function(b, c, d, e, f) {
         return function() {
           return Jj.c(f, e);
         };
-      }(this, c, d, k, l)}, "refresh"))), React.DOM.div({className:"panel-body"}, Qj(this.lb.e ? this.lb.e(oh.e(this.data)) : this.lb.call(null, oh.e(this.data))))));
+      }(this, c, d, k, l)}, "refresh")), React.DOM.div({className:"panel-body"}, Qj(this.lb.e ? this.lb.e(oh.e(this.data)) : this.lb.call(null, oh.e(this.data))))));
     }, ol.prototype.A = function() {
       return this.od;
     }, ol.prototype.B = function(b, c) {
