@@ -111,6 +111,7 @@
 
 (def exercise-order [:twelve-keys
                      :triads
+                     :sevenths
                      :improv
                      :vamp
                      :vamp-2-strings
@@ -126,6 +127,11 @@
                                        :values    nil
                                        :view      triads-view
                                        :generator #(r/rand-triads 10)}
+                      :sevenths       {:enabled   false
+                                       :title     "Random 7th Chords"
+                                       :values    nil
+                                       :view      triads-view
+                                       :generator #(r/rand-sevenths 10)}
                       :fingering      {:enabled   false
                                        :title     "Fingering"
                                        :values    nil

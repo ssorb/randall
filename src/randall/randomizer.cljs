@@ -40,6 +40,8 @@
 
 (def chord-quality [:maj :min :dim :aug])
 
+(def seventh-chords [:maj7 :min7 :7 :min7b5 :7sus4 :maj6 :min6 "min/maj7" :dim7 :maj7#5 :maj7b5 :7#5 :7b5])
+
 (def fingerings
   [1234
    1243
@@ -148,6 +150,13 @@
    (mapv vector
          (rand-n-of n notes)
          (rand-n-of n chord-quality))))
+
+(defn rand-sevenths
+  ([] (rand-sevenths (max 2 (rand-int 8))))
+  ([n]
+   (mapv vector
+         (rand-n-of n notes)
+         (rand-n-of n seventh-chords))))
 
 (defn rand-twelve-keys []
   (rand-n-of 12 notes))
