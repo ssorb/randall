@@ -4,7 +4,6 @@
     [cljs.core.async :refer [put! chan <!]]
     [om.core :as om :include-macros true]
     [om.dom :as dom :include-macros true]
-    [figwheel.client :as fw :include-macros true]
     [randall.randomizer :as r]
     [sablono.core :as html :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go-loop]]))
@@ -196,6 +195,8 @@
 (om/root build-root app-state
          {:target (. js/document (getElementById "app"))})
 
-(fw/watch-and-reload
-  ;; :websocket-url "ws:localhost:3449/figwheel-ws" default
-  :jsload-callback (fn [] (print "reloaded")))              ;; optional callback
+(defn on-js-reload []
+  ;; optionally touch your app-state to force rerendering depending on
+  ;; your application
+  ;; (swap! app-state update-in [:__figwheel_counter] inc)
+  (print "reloaded"))

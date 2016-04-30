@@ -11,3 +11,4 @@ pom.xml
 .nrepl-port
 randall.iml
 resources/public/js/
+figwheel_server.log
